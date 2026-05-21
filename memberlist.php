@@ -34,6 +34,14 @@ function enqueue_itemlist_script() {
 
 add_shortcode('otu_itemlist', 'otu_itemlist' );
 
+function otu_sortclass($a, $b) {
+  $va = $a['year'] * 1000 + $a['term'];
+  $vb = $b['year'] * 1000 + $b['term'];
+  if( $va === $vb && $a['suffix'] === $b['suffix'] ) return 0;
+  if( $va === $vb ) return $a['suffix'] < $b['suffix'] ? -1 : 1;
+  return ( $va < $vb ) ? -1 : 1;
+}
+
 function otu_itemlist (  ) {
     global $add_itemlist_script;
     $add_itemlist_script = true;
@@ -89,14 +97,7 @@ function otu_itemlist (  ) {
             }
         }
     }
-    function sortclass($a, $b) {
-        $va = $a['year'] * 1000 + $a['term'];
-        $vb = $b['year'] * 1000 + $b['term'];
-        if( $va === $vb && $a['suffix'] === $b['suffix'] ) return 0;
-        if( $va === $vb ) return $a['suffix'] < $b['suffix'] ? -1 : 1;
-        return ( $va < $vb ) ? -1 : 1;
-    }
-    usort ( $classes, "sortclass" );
+    usort ( $classes, "otu_sortclass" );
     $clsses = array();
     foreach ( $classes as $class ) {
         $clsses[] =  $class['term'] . "/" . $class['year'] . $class['suffix'];
